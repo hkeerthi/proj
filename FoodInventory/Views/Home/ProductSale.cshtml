@@ -1,0 +1,142 @@
+﻿@using System.Collections;
+
+@model FoodInventory.Models.ProductSaleModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    function fileCheck() {       
+        var inp = $("#UnitsSold").val();
+
+        if (inp <= 0) {
+            $("#UnitsSold").css({
+                "border": "1px solid red",
+                "background": "#FFCECE"
+            });
+            alert("Enter units to purchase");
+            return false;
+        } else {       
+                            $("#UnitsSold").css({
+                                "border": "",
+                                "background": ""
+                            });}
+    return true;
+    }
+
+   
+</script>
+<style type="text/css">
+    .error {
+        color: red;
+    }
+</style>
+<script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+
+<script>
+    
+
+</script>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h3>Sale Information:</h3>       
+    </div>
+</div>
+<div class="row" style="margin-top:25px">
+    <div class="col-sm-12">
+        <table id="tblListingOfSales" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Sale ID</th>                    
+                    <th>Product Name</th>
+                    <th>Units Available</th>
+                    <th>Units Sold</th>
+                    <th>Sale Date</th>
+                    <th>Discount</th>
+                    <th>Payment Type</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <h3>Purchase Products:</h3>
+    </div>
+</div>
+<div>
+    @using (Html.BeginForm("ProductSale", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="form-group" style="margin-top:20px;">
+            <label for="ID">Product Name:</label>
+            <div class="form-control">
+                @Html.DropDownListFor(m => m.ProductId,
+            new SelectList(Model.ProductOptions,
+                           "ID", "Name",
+                           Model.ProductOptions.First().ID))
+
+            </div>
+        </div>
+        <div class="form-group">                        
+                <label for="UnitsSold">Units to Purchase</label>
+                @Html.TextBoxFor(m => m.UnitsSold, new { @class = "form-control" })
+                <small id="txtUnitsPurchasedHelp" class="form-text text-muted">number of products you are pruchasing here.</small>            
+        </div>
+        <div class="form-group">
+            <label for="Discount">Discount($)</label>
+            @Html.TextBoxFor(m => m.Discount, new { @class = "form-control" })
+            <small id="txtDiscountHelp" class="form-text text-muted">Discount applied on pruchasing here.</small>
+        </div>
+        <div class="form-group">
+            <label for="PaymentType">PaymentType:</label>
+            @*@Html.TextBoxFor(m => m.Discount, new { @class = "form-control" })*@
+            @Html.RadioButtonFor(x => x.PaymentType, "Credit", new { Checked = "checked" })
+            @Html.Label("Credit")
+            @Html.RadioButtonFor(x => x.PaymentType, "Debit")
+            @Html.Label("Debit")
+            @Html.RadioButtonFor(x => x.PaymentType, "Check")
+            @Html.Label("Check")
+            @Html.RadioButtonFor(x => x.PaymentType, "Cash")
+            @Html.Label("Cash")
+
+            <br/>
+            <small id="txtPaymentTypeHelp" class="form-text text-muted">Payment Type for pruchasing here.</small>
+        </div>
+        <div class="form-group">
+
+            <input type="submit" value="Purchase" class="btn btn-default" onclick="return fileCheck();" />&nbsp;
+            <input type="button" value="Cancel" class="btn btn-default" onclick="document.location.href('../home/ProductSale')" />
+
+        </div>
+    }
+ 
+</div>
+@if (ViewBag.DisplayMessage != null)
+{
+<div id="dialogErrors" title="Error Registering">
+    <span class="btn-success">Message</span>
+    <ul>
+        <li>
+            @ViewData["DisplayMessage"]
+        </li>
+    </ul>
+</div>
+}
+
+
+
+   @section scripts {
+    <script type="text/javascript">
+    if (typeof (FoodInventory) === 'undefined' || FoodInventory === null) {
+        var FoodInventory = {};
+    }
+
+    FoodInventory.SalesAPIURL = '@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)@Url.Content("~/")api/Sale';
+    </script>
+    @Scripts.Render("~/bundles/Sale")
+       }
+   
+
+

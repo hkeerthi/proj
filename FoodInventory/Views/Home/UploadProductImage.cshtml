@@ -1,0 +1,62 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using System.Collections;
+
+@model FoodInventory.Models.ProductImageModel
+
+<script type="text/javascript">
+    function fileCheck(obj) {
+        var fileExtension = ['jpeg', 'jpg', 'png'];        
+        var fp = $("#ImageData");
+        var lg = fp[0].files.length; // get length
+        var items = fp[0].files;
+        var fileName = items[0].name; // get file name
+        var fileSize = items[0].size; // get file size 
+        var fileType = items[0].type; // get file type
+      
+        if ($.inArray(fileName.split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only '.jpeg','.jpg', '.png' formats are allowed.");
+            return false;
+        }
+        else if (fileSize/1024 > 500) {
+            alert("File size should be less than 500kb.");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+
+<div>
+    @using (Html.BeginForm("UploadProductImage", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="form-group" style="margin-top:20px;">           
+            <label for="ID">Product Name:</label>
+            <div class="form-control">
+              @Html.DropDownListFor(m => m.ID,
+               new SelectList(Model.ProductOptions,
+                              "ID", "Name",
+                              Model.ProductOptions.First().ID))
+
+            </div>
+        </div>
+        <div class="form-group">
+           
+            <label for="ProductImage">Select Product Image:</label>
+            <div class="form-control">
+                <input type="file" name="ImageData" id="ImageData"  />
+               
+            </div>
+        </div>
+
+        <div class="form-group">
+           
+                <input type="submit" value="Upload Image" onclick="return fileCheck(this);"  class="btn btn-default" />&nbsp;
+                <input type="button" value="Cancel" class="btn btn-default" onclick="document.location.href('../home/UploadProductImage')" />
+            
+        </div>
+
+    }
+    </div>
+

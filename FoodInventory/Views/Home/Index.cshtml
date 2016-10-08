@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Listing of Products";
+}
+
+@using System.Collections;
+
+
+
+    <div class="row" style="margin-top:10px;">
+        <div class="col-sm-12">
+            @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {               
+                <div class="form-group">
+
+                    <label for="Import Products"> Import Products:</label>
+                    <div class="form-control">
+                        <table>
+                            <tr>
+                                <td><input type="file" name="file" /></td>
+                                <td width="20"></td>
+                                <td><input type="submit" value="Import" /></td>
+                            </tr>
+                        </table>     
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <h2>@Html.Raw(ViewBag.Title)</h2>
+                <p>
+                    Below you will find a listing of products at our store.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="margin:10px 0px 10px 10px">
+                    @using (Html.BeginForm("ExportData", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <span>                           
+                            <input type="submit" value=" Export to Excel" />
+                        </span>
+                    }
+                </div>
+                <table id="tblListingOfProducts" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>                            
+                            <th>Product Name</th>
+                            <th>Image</th>
+                            <th>Purchase Price</th>
+                            <th>Sales Price</th>
+                            <th>Spoil Date</th>
+                            <th>Units Available</th>                            
+                            <th>Action</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+@if (ViewBag.MyErrorMessage != null)
+{
+    //Display the error message
+    //You can: display it in a div (without popup), you can show a javascript Alert(), or display a modal dialog.
+   
+    <div id="dialogErrors" title="Error Registering">
+        <span class="btn-success">Message</span>
+        <ul>
+            @foreach (string item in (ArrayList) ViewData["MyErrorMessage"])
+            {
+                <li>
+                    @item
+                </li>
+            }
+        </ul>
+    </div>
+}
+        @section scripts {
+            <script type="text/javascript">
+    if (typeof (FoodInventory) === 'undefined' || FoodInventory === null) {
+        var FoodInventory = {};
+    }
+
+    FoodInventory.ProductsAPIURL = '@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)@Url.Content("~/")api/Product';               
+               
+    FoodInventory.ProductsAddEditFormURL = '@Url.Action("AddEditProduct", "Home")';
+</script>
+            @Scripts.Render("~/bundles/index")
+        }
+
